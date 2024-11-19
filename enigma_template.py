@@ -23,16 +23,44 @@ def encode_message():
         print("You did not enter a valid value, key being randomized...")
         key = random.randint(0, 25)
     for i in range(len(msg)):
-        letter = alphabet[(i % 26 + key) % 26]
+        try:
+            letter = alphabet[(alphabet.index(msg[i]) % 26 + key) % 26]
+        except ValueError:
+            letter = msg[i]
         newmsg += letter
     print(f"Used key of {key} your new message is : {newmsg}")
 
 
 # encodes a target file, similarly to encode_message, except now targeting a filename
 def encode_file():
-    pass
-
-
+    newmsg = ""
+    file = str(input("What is the name of the file you want to encode?"))
+    try:
+        file = open(file, 'r')
+        file = file.read().lower()
+    except FileNotFoundError:
+        print("That file does not exist.")
+    key = input("Input the rotational cipher key: (Press enter for random value)")
+    if key == "":
+        key = random.randint(0, 25)
+    try:
+        key = int(key)
+    except ValueError:
+        print("You did not enter a valid value, key being randomized...")
+        key = random.randint(0, 25)
+    for i in range(len(file)):
+        try:
+            letter = alphabet[(alphabet.index(file[i]) % 26 + key) % 26]
+        except ValueError:
+            letter = file[i]
+        newmsg += letter
+    choice = int(input("Choose an option: \n"
+                       "1. Overwrite original file.\n"
+                       "2. Write new file."))
+    if choice == 1:
+        pass
+    if choice == 2:
+        pass
 # decodes target file using a user-specified key. If key is unknown, a keypress should
 # call decode_unknown_key()
 def decode_file():
@@ -41,7 +69,8 @@ def decode_file():
 
 # runs if the key is unknown. If this is true, print out all possible decoding combinations.
 def decode_unknown_key(filename):
-    pass
+    for i in range(len(alphabet)):
+        key = i
 
 
 # main method declaration
