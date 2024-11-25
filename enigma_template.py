@@ -34,12 +34,17 @@ def encode_message():
 # encodes a target file, similarly to encode_message, except now targeting a filename
 def encode_file():
     newmsg = ""
-    file = str(input("What is the name of the file you want to encode?"))
-    try:
-        file = open(file, 'r')
-        file = file.read().lower()
-    except FileNotFoundError:
-        print("That file does not exist.")
+    fileFound = False
+    while fileFound is False:
+        filen = str(input("What is the name of the file you want to encode?"))
+        try:
+            file = open(filen, 'r')
+            filetxt = file.read().lower()
+            print(filetxt)
+            fileFound = True
+        except FileNotFoundError:
+            print("That file does not exist.")
+            fileFound = False
     key = input("Input the rotational cipher key: (Press enter for random value)")
     if key == "":
         key = random.randint(0, 25)
@@ -48,29 +53,68 @@ def encode_file():
     except ValueError:
         print("You did not enter a valid value, key being randomized...")
         key = random.randint(0, 25)
-    for i in range(len(file)):
+    for i in range(len(filetxt)):
         try:
-            letter = alphabet[(alphabet.index(file[i]) % 26 + key) % 26]
+            letter = alphabet[(alphabet.index(filetxt[i]) % 26 + key) % 26]
         except ValueError:
-            letter = file[i]
+            letter = filetxt[i]
         newmsg += letter
+    file.close()
+    print(f"Encoded with a key of {key}!")
     choice = int(input("Choose an option: \n"
                        "1. Overwrite original file.\n"
                        "2. Write new file."))
     if choice == 1:
-        pass
+        file = open(filen, "w")
+        file.write(newmsg)
     if choice == 2:
-        pass
+        file = open("encoded" + filen, "x")
+        file.write(newmsg)
+
+
 # decodes target file using a user-specified key. If key is unknown, a keypress should
 # call decode_unknown_key()
 def decode_file():
-    pass
-
+    newmsg = ""
+    fileFound = False
+    while fileFound is False:
+        filen = str(input("What is the name of the file you want to encode?"))
+        try:
+            file = open(filen, 'r')
+            filetxt = file.read().lower()
+            fileFound = True
+        except FileNotFoundError:
+            print("That file does not exist.")
+            fileFound = False
+    key = input("If you know the key, enter it. If not, press enter.")
+    if key == "":
+        decode_unknown_key(filetxt)
+        return
+    try:
+        key = int(key)
+    except ValueError:
+        decode_unknown_key(filetxt)
+        return
+    for i in range(len(filetxt)):
+        try:
+            letter = alphabet[(alphabet.index(filetxt[i]) % 26 - key) % 26]
+        except ValueError:
+            letter = filetxt[i]
+        newmsg += letter
+    print(newmsg)
 
 # runs if the key is unknown. If this is true, print out all possible decoding combinations.
 def decode_unknown_key(filename):
-    for i in range(len(alphabet)):
-        key = i
+    print("UNKNOWN!")
+    for key in range(26):
+        newmsg = ""
+        for i in range(len(filename)):
+            try:
+                letter = alphabet[(alphabet.index(filename[i]) % 26 - key) % 26]
+            except ValueError:
+                letter = filename[i]
+            newmsg += letter
+        print(f"KEY #{key}: {newmsg} is key")
 
 
 # main method declaration
