@@ -9,12 +9,20 @@ import random
 # we'll be using this string for the majority of our translations
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 
+def genmsg(text, k):
+    newmsg = ""
+    for i in range(len(text)):
+        try:
+            letter = alphabet[(alphabet.index(text[i]) % 26 + k) % 26]
+        except ValueError:
+            letter = text[i]
+        newmsg += letter
+    return newmsg
 
 # user inputs a message and selects a key (or random), the message is then translated using the cipher
 def encode_message():
     msg = str(input("Input Message here: ")).lower()
     key = input("Input the rotational cipher key: (Press enter for random value)")
-    newmsg = ""
     if key == "":
         key = random.randint(0, 25)
     try:
@@ -22,12 +30,7 @@ def encode_message():
     except ValueError:
         print("You did not enter a valid value, key being randomized...")
         key = random.randint(0, 25)
-    for i in range(len(msg)):
-        try:
-            letter = alphabet[(alphabet.index(msg[i]) % 26 + key) % 26]
-        except ValueError:
-            letter = msg[i]
-        newmsg += letter
+    newmsg = genmsg(msg, key)
     print(f"Used key of {key} your new message is : {newmsg}")
 
 
@@ -53,12 +56,7 @@ def encode_file():
     except ValueError:
         print("You did not enter a valid value, key being randomized...")
         key = random.randint(0, 25)
-    for i in range(len(filetxt)):
-        try:
-            letter = alphabet[(alphabet.index(filetxt[i]) % 26 + key) % 26]
-        except ValueError:
-            letter = filetxt[i]
-        newmsg += letter
+    newmsg = genmsg(filetxt, key)
     file.close()
     print(f"Encoded with a key of {key}!")
     choice = int(input("Choose an option: \n"
@@ -68,7 +66,8 @@ def encode_file():
         file = open(filen, "w")
         file.write(newmsg)
     if choice == 2:
-        file = open("encoded" + filen, "x")
+        randomvalue = str(random.randint(1, 100))
+        file = open(f"encoded + {randomvalue} " + filen, "x")
         file.write(newmsg)
 
 
